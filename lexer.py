@@ -1,20 +1,14 @@
 #-------------------------------------------------------------------------------
-# lexer.py
-#
-# A generic regex-based Lexer/tokenizer tool.
-# See the if __main__ section in the bottom for an example.
-#
-# Eli Bendersky (eliben@gmail.com)
-# This code is in the public domain
-# Last modified: August 2010
+# Taken and modified from Eli Bendersky (eliben@gmail.com) public domain code
 #-------------------------------------------------------------------------------
 import re
 import sys
 
 
 class Token(object):
-    """ A simple Token structure.
-        Contains the token type, value and position.
+    """
+    A simple Token structure.
+    Contains the token type, value and position.
     """
     def __init__(self, type, val, pos):
         self.type = type
@@ -26,10 +20,11 @@ class Token(object):
 
 
 class LexerError(Exception):
-    """ Lexer error exception.
+    """
+    Lexer error exception.
 
-        pos:
-            Position in the input line where the error occurred.
+    pos:
+        Position in the input line where the error occurred.
     """
     def __init__(self, pos):
         self.pos = pos
@@ -41,19 +36,20 @@ class Lexer(object):
         See below for an example of usage.
     """
     def __init__(self, rules, skip_whitespace=True):
-        """ Create a lexer.
+        """
+        Create a lexer
 
-            rules:
-                A list of rules. Each rule is a `regex, type`
-                pair, where `regex` is the regular expression used
-                to recognize the token and `type` is the type
-                of the token to return when it's recognized.
+        rules:
+            A list of rules. Each rule is a `regex, type`
+            pair, where `regex` is the regular expression used
+            to recognize the token and `type` is the type
+            of the token to return when it's recognized.
 
-            skip_whitespace:
-                If True, whitespace (\s+) will be skipped and not
-                reported by the lexer. Otherwise, you have to
-                specify your rules for whitespace, or it will be
-                flagged as an error.
+        skip_whitespace:
+            If True, whitespace (\s+) will be skipped and not
+            reported by the lexer. Otherwise, you have to
+            specify your rules for whitespace, or it will be
+            flagged as an error.
         """
         # All the regexes are concatenated into a single one
         # with named groups. Since the group names must be valid
@@ -76,18 +72,20 @@ class Lexer(object):
         self.re_ws_skip = re.compile('\S')
 
     def input(self, buf):
-        """ Initialize the lexer with a buffer as input.
+        """
+        Initialize the lexer with a buffer as input.
         """
         self.buf = buf
         self.pos = 0
 
     def token(self):
-        """ Return the next token (a Token object) found in the
-            input buffer. None is returned if the end of the
-            buffer was reached.
-            In case of a lexing error (the current chunk of the
-            buffer matches no rule), a LexerError is raised with
-            the position of the error.
+        """
+        Return the next token (a Token object) found in the
+        input buffer. None is returned if the end of the
+        buffer was reached.
+        In case of a lexing error (the current chunk of the
+        buffer matches no rule), a LexerError is raised with
+        the position of the error.
         """
         if self.pos >= len(self.buf):
             return None
@@ -112,7 +110,8 @@ class Lexer(object):
             raise LexerError(self.pos)
 
     def tokens(self):
-        """ Returns an iterator to the tokens found in the buffer.
+        """
+        Returns an iterator to the tokens found in the buffer.
         """
         while 1:
             tok = self.token()
@@ -120,7 +119,7 @@ class Lexer(object):
             yield tok
 
 
-if __name__ == '__main__':
+def simpleRun():
     rules = [
         ('\d+',             'NUMBER'),
         ('[a-zA-Z_]\w+',    'IDENTIFIER'),
@@ -141,4 +140,30 @@ if __name__ == '__main__':
             print(tok)
     except LexerError as err:
         print('LexerError at position %s' % err.pos)
+
+def markdownRun():
+    rules = [
+        ('\d+',             'NUMBER'),
+        ('[a-zA-Z_]\w+',    'IDENTIFIER'),
+        ('\+',              'PLUS'),
+        ('\-',              'MINUS'),
+        ('\*',              'MULTIPLY'),
+        ('\/',              'DIVIDE'),
+        ('\(',              'LP'),
+        ('\)',              'RP'),
+        ('=',               'EQUALS'),
+    ]
+
+    lx = Lexer(rules, skip_whitespace=True)
+    lx.input('erw = _abc + 12*(R4-623902)  ')
+
+    try:
+        for tok in lx.tokens():
+            print(tok)
+    except LexerError as err:
+        print('LexerError at position %s' % err.pos)
+
+if __name__ == '__main__':
+    simpleRun()
+    markdownRun()
 
