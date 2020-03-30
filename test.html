@@ -1,0 +1,243 @@
+<p>cats
+meowww  cat
+cat</p>
+<p>meoww.
+...</p>
+<h1 id="introduction">Introduction</h1>
+<p>Welcome to the BBOXX SMARTSolar API.</p>
+<p>The SMARTSolar API is an interface designed to allow users to remotely and automatically control a BBOXX unit and access its information.</p>
+<p>This document aims to provide a complete listing of the actions that a user can take, the data available in the SMARTSolar API and the schema and architecture of the API.</p>
+<p>The different sections of the Documentation are as follows:</p>
+<ul>
+<li><a href="#schema">Schema</a> - A detailed listing of the resources available and how to access them.</li>
+<li><a href="#product-actions">Product Actions</a> - A listing of the actions that a user can make for a specific product.</li>
+<li><a href="#product-data">Product Data</a> - A listing of what telemetry data is recorded from each <a href="#product">product</a> and how to access it.</li>
+<li><a href="#repair-actions">Repair Actions</a> - A listing of the actions that a user can make for a specific repair.</li>
+<li><a href="#rtc-dead-letter-actions">RTC Dead Letter Actions</a> - Endpoints that can be used to perform actions on RTC Dead Letter messages. .</li>
+<li><a href="#custom-endpoints">Custom Endpoints</a> - A listing of other endpoints available to a user not specifically relating to an individual product.</li>
+<li><a href="#notifications-web-hooks">Notifications (Webhooks)</a> - Information of how to receive data and updates from the SMARTSolar API</li>
+<li><a href="#using-the-api">Using the API</a> - Information about the general use of the API including authentication, filtering and data formats.</li>
+</ul>
+<h1 id="schema">Schema</h1>
+<p>This section describes the full schema of the SMARTSolar Database.</p>
+<p>You can find listings of every table and the relationships between objects as well as information on how to query, create and modifiy information via the API.</p>
+<h2 id="action-type-product-type-linker"><u>Action Type Product Type Linker</u></h2>
+<p>Specifies which action-types can be taken on each product-type during a repair.</p>
+<h3 id="the-action_type_product_type_linker-object"><u>The action_type_product_type_linker object</u></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right">Field</th>
+<th style="text-align: left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right"><strong>action_type_product_type_linker_id</strong> <br><font color="DarkGray"><em>int</em></font> <font color="Crimson"><strong>(primary key)</strong></font></td>
+<td style="text-align: left">A unique integer identifier for each action_type_product_type_linker.</td>
+</tr>
+<tr>
+<td style="text-align: right"><strong><a href="/#product-type">product_type_id</a></strong> <br><font color="DarkGray"><em>int</em></font> <font color="Crimson">(not-null,foreign-key)</font></td>
+<td style="text-align: left"></td>
+</tr>
+<tr>
+<td style="text-align: right"><strong><a href="/#action-type">action_type_id</a></strong> <br><font color="DarkGray"><em>int</em></font> <font color="Crimson">(not-null,foreign-key)</font></td>
+<td style="text-align: left"></td>
+</tr>
+<tr>
+<td style="text-align: right"><strong>created_at</strong>  <br><font color="DarkGray"><em>datetime</em></font></td>
+<td style="text-align: left">timestamp that the record was created at</td>
+</tr>
+<tr>
+<td style="text-align: right"><strong>created_by</strong>  <br><font color="DarkGray"><em>text</em></font></td>
+<td style="text-align: left">username of the user who created the record</td>
+</tr>
+<tr>
+<td style="text-align: right"><strong>modified_at</strong> <br><font color="DarkGray"><em>datetime</em></font></td>
+<td style="text-align: left">timestamp that the record was last modified</td>
+</tr>
+<tr>
+<td style="text-align: right"><strong>modified_by</strong> <br><font color="DarkGray"><em>text</em></font></td>
+<td style="text-align: left">user that last modified the record</td>
+</tr>
+</tbody>
+</table>
+<br>
+<table>
+<thead>
+<tr>
+<th style="text-align: right">Relationship</th>
+<th style="text-align: left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right"><font color="DarkGray">N/A</font></td>
+<td style="text-align: left"><font color="DarkGray"><em>There are no relationships for this table.</em></font></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<br>
+<blockquote>
+<p>An example POST request. Note that <code>action_type_product_type_linker_id</code>, <code>created_at</code>, <code>modified_at</code> and <code>created_by</code> are all handled internally by the system and need not be explicitly specified. See Meta Data for more information.</p>
+</blockquote>
+<pre><code class="language-python">    url = &quot;https://smartapi.bboxx.co.uk/v1/action_type_product_type_linker&quot;
+    data = json.dumps({
+		&quot;product_type_id&quot;: 1,
+		&quot;action_type_id&quot;: 1,
+		})
+    headers = {&#x27;Content-Type&#x27;: &#x27;application/json&#x27;, &#x27;Authorization&#x27;: &#x27;Token token=A_VALID_TOKEN&#x27;}
+
+    r = requests.post(url=url, data=data, headers=headers)
+
+    r
+    &gt;&gt;&gt; &lt;Response 201&gt;
+
+    r.json()
+
+    &gt;&gt;&gt; {
+		&quot;action_type_product_type_linker_id&quot;: 1
+		&quot;product_type_id&quot;: 1,
+		&quot;action_type_id&quot;: 1,
+		&quot;created_at&quot;: &quot;2000-01-01 00:00:00&quot;
+		&quot;created_by&quot;: &quot;test.user@bboxx.co.uk&quot;
+		&quot;modified_at&quot;: None
+	}
+</code></pre>
+<pre><code>&gt; We can retrieve the `action_type_product_type_linker` created by specifying its `action_type_product_type_linker_id` in the request url:
+</code></pre>
+<pre><code class="language-python">    url = &#x27;https://smartapi.bboxx.co.uk/v1/action_type_product_type_linker/1&#x27;
+    headers = {&#x27;Content-Type&#x27;: &#x27;application/json&#x27;, &#x27;Authorization&#x27;: &#x27;Token token=A_VALID_TOKEN&#x27;}
+
+    r = requests.get(url=url, headers=headers)
+
+    r
+    &gt;&gt;&gt; &lt;Response 200&gt;
+
+    r.json()
+    &gt;&gt;&gt; {
+		&quot;action_type_product_type_linker_id&quot;: 1
+		&quot;product_type_id&quot;: 1,
+		&quot;action_type_id&quot;: 1,
+		&quot;created_at&quot;: &quot;2000-01-01 00:00:00&quot;
+		&quot;created_by&quot;: &quot;test.user@bboxx.co.uk&quot;
+		&quot;modified_at&quot;: None
+	}
+</code></pre>
+<blockquote>
+<p>We can retrieve all <code>action_type_product_type_linker</code> by omitting the <code>action_type_product_type_linker_id</code>:</p>
+</blockquote>
+<pre><code class="language-python">    url = &#x27;https://smartapi.bboxx.co.uk/v1/action_type_product_type_linker&#x27;
+    headers = {&#x27;Content-Type&#x27;: &#x27;application/json&#x27;, &#x27;Authorization&#x27;: &#x27;Token token=A_VALID_TOKEN&#x27;}
+
+    r = requests.get(url=url, headers=headers)
+
+    r
+    &gt;&gt;&gt; &lt;Response 200&gt;
+
+    r.json()
+    &gt;&gt;&gt; {
+        u&#x27;total_pages&#x27;: 1,
+        u&#x27;objects&#x27;: [
+            {&lt;record&gt;},
+            {&lt;record&gt;},
+            {&lt;record&gt;},
+            {&lt;record&gt;},
+            {&lt;record&gt;},
+        ],
+        u&#x27;num_results&#x27;: 10,
+        u&#x27;page&#x27;: 1
+    }
+</code></pre>
+<blockquote>
+<p>We can edit the newly created <code>action_type_product_type_linker</code> with a <code>PUT</code> request:</p>
+</blockquote>
+<pre><code class="language-python">    url = &#x27;https://smartapi.bboxx.co.uk/v1/action_type_product_type_linker/1&#x27;
+    data = json.dumps({
+		&quot;product_type_id&quot;: 2,
+		&quot;action_type_id&quot;: 2,
+		})
+    headers = {&#x27;Content-Type&#x27;: &#x27;application/json&#x27;, &#x27;Authorization&#x27;: &#x27;Token token=A_VALID_TOKEN&#x27;}
+
+    r = requests.put(url=url, data=data, headers=headers)
+
+    r
+    &gt;&gt;&gt; &lt;Response 200&gt;
+
+    r.json()
+    &gt;&gt;&gt; {
+		&quot;action_type_product_type_linker_id&quot;: 1
+		&quot;product_type_id&quot;: 2,
+		&quot;action_type_id&quot;: 2,
+		&quot;created_at&quot;: &quot;2000-01-01 00:00:00&quot;
+		&quot;created_by&quot;: &quot;test.user@bboxx.co.uk&quot;
+		&quot;modified_at&quot;: 2016-07-07 12:34:45
+	}
+</code></pre>
+<blockquote>
+<p>Note that the <code>modified_at</code> field has been updated accordingly.</p>
+</blockquote>
+<blockquote>
+<p>If a user has <code>SYSTEM</code> permissions they can delete the <code>action_type_product_type_linker</code></p>
+</blockquote>
+<pre><code class="language-python">    url = &#x27;https://smartapi.bboxx.co.uk/v1/action_type_product_type_linker/1&#x27;
+    headers = {&#x27;Content-Type&#x27;: &#x27;application/json&#x27;, &#x27;Authorization&#x27;: &#x27;Token token=A_VALID_TOKEN&#x27;}
+
+    r = requests.delete(url=url, headers=headers)
+
+    r
+    &gt;&gt;&gt; &lt;Response 204&gt;
+
+    r.text
+    &gt;&gt;&gt;
+</code></pre>
+<blockquote>
+<p>Note that the response from a 204 request is empty. This means that <code>r.json()</code> cannot be called and will throw a JSONDecodeError. In fact the response is <code>u&#x27;&#x27;</code> - an empty unicode string.</p>
+</blockquote>
+<h3 id="post">POST</h3>
+<pre><code> | value
+</code></pre>
+<p>----:|:---
+endpoint | <code>/v1/action_type_product_type_linker</code>
+method | <code>POST</code>
+url_params | <font color="DarkGray">N/A</font>
+query params | <font color="DarkGray">N/A</font>
+body | JSON-formatted dictionary with the details of the <code>action_type_product_type_linker</code> that you wish to create
+permissions | <font color="Crimson">__<code>SYSTEM</code>__</font>
+response | <code>201</code></p>
+<h3 id="get">GET</h3>
+<pre><code> | value
+</code></pre>
+<p>----:|:---
+endpoint | <code>/v1/action_type_product_type_linker</code> or <code>/v1/action_type_product_type_linker/&lt;action_type_product_type_linker_id&gt;</code>
+method | <code>GET</code>
+url_params | <code>action_type_product_type_linker_id</code> <font color="DarkGray"><em>(int)</em></font>
+query params | <em>&gt; See Query Format and Filtering</em>
+body | <font color="DarkGray">N/A</font>
+permissions | <font color="Jade">__<code>OVERVIEW</code>__</font>
+response | <code>200</code></p>
+<h3 id="put">PUT</h3>
+<pre><code> | value
+</code></pre>
+<p>----:|:---
+endpoint | <code>/v1/action_type_product_type_linker/&lt;action_type_product_type_linker_id&gt;</code>
+method | <code>PUT</code>
+url_params | <code>action_type_product_type_linker_id</code> of the action_type_product_type_linker you wish to edit
+query params | <font color="DarkGray">N/A</font>
+body | JSON-formatted dictionary of the columns that you wish to alter
+permissions | <font color="Crimson">__<code>SYSTEM</code>__</font>
+response | <code>200</code></p>
+<h3 id="delete">DELETE</h3>
+<pre><code> | value
+</code></pre>
+<p>----:|:---
+endpoint | <code>/v1/action_type_product_type_linker/&lt;action_type_product_type_linker_id&gt;</code>
+method | <code>DELETE</code>
+url_params | <code>action_type_product_type_linker_id</code> <font color="DarkGray"><em>(int)</em></font>
+query params | <font color="DarkGray">N/A</font>
+body | <font color="DarkGray">N/A</font>
+permissions | <font color="Crimson">__<code>SYSTEM</code>__</font>
+response | <code>204</code></p>
+<pre><code>
+</code></pre>
