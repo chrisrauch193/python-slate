@@ -65,17 +65,17 @@ with open("source/index.html.md") as file_in:
     content = [x.strip() for x in lines]
     finalContent = fileContent
 
+# Adding includes content
 if "includes" in settings:
     for includedFile in settings["includes"]:
        with open("source/includes/" + includedFile) as file_in:
            finalContent += file_in.read()
 
-print("---FILE CONTENT---")
-print(finalContent)
+# print("---FILE CONTENT---")
+# print(finalContent)
 
-print("---SETTINGS---")
-print(settings)
-
+# print("---SETTINGS---")
+# print(settings)
 
 
 
@@ -87,7 +87,7 @@ SlateHTMLRenderer.settings = settings
 
 rendered = mistletoe.markdown(finalContent, SlateHTMLRenderer)
 
-print(rendered)
+# print(rendered)
 
 # f = open("_action_type_product_type_linker.html", "r+")
 f = open("build/index.html", "w+")
